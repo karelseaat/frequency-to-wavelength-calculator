@@ -1,0 +1,30 @@
+---
+- name: Clone or update application repository
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ app_path }}"
+    version: "{{ repo_branch }}"
+    accept_hostkey: yes
+    force: yes
+  become_user: "{{ app_user }}"
+
+- name: Set proper permissions on application directory
+  file:
+    path: "{{ app_path }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0755'
+    recurse: yes
+
+- name: Ensure storage and bootstrap directories are writable
+  file:
+    path: "{{ app_path }}/{{ item }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0775'
+    recurse: yes
+  loop:
+    - storage
+    - bootstrap/cache

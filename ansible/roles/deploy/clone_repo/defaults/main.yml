@@ -1,0 +1,4 @@
+---
+# Default variables for deploy/clone_repo role
+repo_url: "https://github.com/yourusername/frequency-to-wavelength-calculator.git"
+repo_branch: "main"

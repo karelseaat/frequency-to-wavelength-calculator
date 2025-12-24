@@ -1,0 +1,37 @@
+---
+- name: Deploy Frequency to Wavelength Calculator Application
+  hosts: webservers
+  become: yes
+  vars:
+    php_version: "8.2"
+    node_version: "18"
+
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+  roles:
+    - role: deploy/setup
+    - role: deploy/dependencies
+    - role: deploy/clone_repo
+    - role: deploy/configure_app
+    - role: deploy/install_dependencies
+    - role: deploy/nginx
+
+  post_tasks:
+    - name: Restart services
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: yes
+      loop:
+        - nginx
+        - php{{ php_version }}-fpm
+      ignore_errors: yes
+
+    - name: Application deployment complete
+      debug:
+        msg: "Application deployed successfully to {{ app_path }}"

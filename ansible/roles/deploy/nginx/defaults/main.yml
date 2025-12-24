@@ -1,0 +1,5 @@
+---
+# Default variables for deploy/nginx role
+app_name: frequency-to-wavelength-calculator
+app_path: /var/www/frequency-calculator
+php_version: "8.2"

@@ -1,0 +1,45 @@
+---
+- name: Create application directory
+  file:
+    path: "{{ app_path }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0755'
+
+- name: Create storage and bootstrap directories
+  file:
+    path: "{{ app_path }}/{{ item }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0755'
+  loop:
+    - storage
+    - storage/logs
+    - storage/framework
+    - storage/framework/views
+    - storage/framework/cache
+    - bootstrap/cache
+
+- name: Ensure deploy user exists
+  user:
+    name: deploy
+    shell: /bin/bash
+    home: /home/deploy
+    createhome: yes
+    state: present
+
+- name: Setup SSH key for deploy user
+  authorized_key:
+    user: deploy
+    state: present
+    key: "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
+  ignore_errors: yes
+
+- name: Add deploy user to sudoers
+  lineinfile:
+    path: /etc/sudoers
+    line: "deploy ALL=(ALL) NOPASSWD: ALL"
+    state: present
+    validate: 'visudo -cf %s'

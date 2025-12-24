@@ -1,0 +1,5 @@
+---
+# Default variables for deploy/setup role
+app_name: frequency-to-wavelength-calculator
+app_user: www-data
+app_path: /var/www/frequency-calculator

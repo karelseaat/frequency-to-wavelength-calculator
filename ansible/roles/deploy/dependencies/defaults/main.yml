@@ -1,0 +1,4 @@
+---
+# Default variables for deploy/dependencies role
+php_version: "8.2"
+node_version: "18"

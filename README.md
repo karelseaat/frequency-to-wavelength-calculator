@@ -39,6 +39,25 @@ echo "1 MHz is equal to $frequencyInGHz GHz";
 
 By integrating this simple frequency converter into your project, you'll save time and effort on implementing the conversion logic yourself. Feel free to modify the code or contribute back to the project to make it even more useful for the developer community!
 
+## Deployment
+
+This project includes Ansible playbooks for automated deployment to production servers. For detailed deployment instructions, see the [Ansible Deployment Guide](ansible/README.md).
+
+### Quick Start
+
+1. Configure your inventory:
+   ```bash
+   cd ansible
+   vim inventory.ini
+   ```
+
+2. Run the deployment:
+   ```bash
+   ansible-playbook deploy.yml
+   ```
+
+For more information, including prerequisites and advanced configuration, refer to the [Ansible README](ansible/README.md).
+
 ## Contributing
 
 We welcome contributions from the community! If you'd like to submit a pull request with improvements or new features, please follow these guidelines:

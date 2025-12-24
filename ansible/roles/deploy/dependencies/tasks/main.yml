@@ -1,0 +1,71 @@
+---
+- name: Install system packages (Debian/Ubuntu)
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - curl
+    - wget
+    - git
+    - unzip
+    - vim
+    - htop
+    - supervisor
+    - certbot
+    - python3-certbot-nginx
+  when: ansible_os_family == "Debian"
+
+- name: Install PHP and extensions
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "php{{ php_version }}"
+    - "php{{ php_version }}-fpm"
+    - "php{{ php_version }}-cli"
+    - "php{{ php_version }}-mysql"
+    - "php{{ php_version }}-sqlite3"
+    - "php{{ php_version }}-curl"
+    - "php{{ php_version }}-gd"
+    - "php{{ php_version }}-json"
+    - "php{{ php_version }}-mbstring"
+    - "php{{ php_version }}-xml"
+    - "php{{ php_version }}-zip"
+    - "php{{ php_version }}-bcmath"
+    - "php{{ php_version }}-intl"
+  when: ansible_os_family == "Debian"
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install Node.js
+  shell: |
+    curl -fsSL https://deb.nodesource.com/setup_{{ node_version }}.x | bash -
+    apt-get install -y nodejs
+  args:
+    warn: false
+  when: ansible_os_family == "Debian"
+
+- name: Install Composer
+  shell: |
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  args:
+    creates: /usr/local/bin/composer
+
+- name: Make Composer executable
+  file:
+    path: /usr/local/bin/composer
+    mode: '0755'
+
+- name: Start and enable services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  loop:
+    - nginx
+    - "php{{ php_version }}-fpm"

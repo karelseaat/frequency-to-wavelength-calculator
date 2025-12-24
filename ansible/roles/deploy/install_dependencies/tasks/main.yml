@@ -1,0 +1,36 @@
+---
+- name: Install PHP dependencies using Composer
+  shell: |
+    cd {{ app_path }}
+    composer install --no-dev --optimize-autoloader --no-interaction
+  become_user: "{{ app_user }}"
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: 1
+
+- name: Install Node.js dependencies using npm
+  shell: |
+    cd {{ app_path }}
+    npm install
+  become_user: "{{ app_user }}"
+
+- name: Build frontend assets
+  shell: |
+    cd {{ app_path }}
+    npm run build
+  become_user: "{{ app_user }}"
+
+- name: Run database migrations
+  shell: |
+    cd {{ app_path }}
+    /usr/bin/php{{ php_version }} artisan migrate --force
+  become_user: "{{ app_user }}"
+  changed_when: false
+
+- name: Clear cache and config
+  shell: |
+    cd {{ app_path }}
+    /usr/bin/php{{ php_version }} artisan config:cache
+    /usr/bin/php{{ php_version }} artisan route:cache
+    /usr/bin/php{{ php_version }} artisan view:cache
+  become_user: "{{ app_user }}"
+  changed_when: false
